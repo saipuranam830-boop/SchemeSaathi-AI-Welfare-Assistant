@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "SchemeSaathi AI"
+description = "A multilingual government welfare scheme assistant for Indian citizens to discover schemes, understand eligibility, review required documents, and follow official application guidance."
+version = "1.0.0"
+id = "artifacts/scheme-saathi"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18422
+
+[services.development]
+run = "pnpm --filter @workspace/scheme-saathi run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/scheme-saathi", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/scheme-saathi/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18422"
+BASE_PATH = "/"

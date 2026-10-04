@@ -1,0 +1,1147 @@
+Build a complete, modern, responsive full-stack web application named:
+
+**“Government Welfare Scheme Eligibility Assistant”**
+
+Project concept:
+An Agentic AI-based Government Scheme Eligibility Assistant using **LLMs + RAG + Agentic AI** to help Indian citizens discover government welfare schemes, check eligibility, understand required documents, get application guidance, and track deadlines.
+
+The system should use official government scheme information as the primary knowledge source. The application must be simple enough for rural citizens, students, farmers, women beneficiaries, senior citizens, and other citizens to use.
+
+The project architecture must include:
+
+* LLM layer
+* RAG retrieval layer
+* Agentic AI layer
+* Government scheme database
+* User profile
+* Eligibility verification
+* Document verification
+* Personalized recommendations
+* Application guidance
+* Deadline monitoring
+* Multilingual chatbot
+
+The proposed system should follow this flow:
+
+Citizen Query
+→ Citizen Profile Agent
+→ Eligibility Agent
+→ Document Verification Agent
+→ RAG Retrieval Layer
+→ LLM Reasoning Layer
+→ Recommendation Agent
+→ Deadline Monitoring Agent
+→ Personalized Scheme Guidance
+
+==================================================
+
+1. TECHNOLOGY STACK
+   ==================================================
+
+Frontend:
+
+* React.js
+* Vite
+* Tailwind CSS
+* Responsive design
+* React Router
+* Modern reusable components
+* Lucide icons
+
+Backend:
+
+* Node.js
+* Express.js
+* REST APIs
+
+Database:
+
+* MongoDB
+
+AI:
+
+* Gemini API or another configurable LLM API
+* RAG-based scheme retrieval
+* Agent-based eligibility processing
+
+Authentication:
+
+* JWT authentication
+* Secure password hashing
+* Login
+* Registration
+* Logout
+* Protected dashboard
+
+File handling:
+
+* PDF/document upload
+* Aadhaar document
+* Income certificate
+* Land records
+* Caste certificate
+* Other supporting documents
+
+==================================================
+2. DESIGN REQUIREMENTS
+======================
+
+Create a professional government-service-style UI.
+
+Design goals:
+
+* Clean
+* Trustworthy
+* Simple
+* Accessible
+* Mobile responsive
+* Easy for first-time users
+* Suitable for rural citizens
+* Avoid excessive animations
+* Large readable text
+* Clear buttons
+* Clear eligibility status
+
+Use a modern card-based layout.
+
+Main colors should have a government/public-service feel.
+
+Use icons for:
+
+* Farmer
+* Student
+* Women
+* Senior citizen
+* Healthcare
+* Education
+* Housing
+* Employment
+* Agriculture
+* Documents
+* AI
+* Notifications
+
+Add accessibility features:
+
+* High contrast
+* Large readable typography
+* Keyboard navigation
+* Clear error messages
+* Screen-reader friendly labels
+
+==================================================
+3. LANDING PAGE
+===============
+
+Create a beautiful landing page.
+
+Header:
+
+Logo:
+“SchemeSaathi AI”
+
+Navigation:
+
+* Home
+* Schemes
+* How It Works
+* About
+* Help
+* Login
+* Register
+
+Hero section:
+
+Heading:
+“Find Government Schemes You’re Eligible For”
+
+Subheading:
+“AI-powered personalized assistance to discover, understand and apply for government welfare schemes.”
+
+Buttons:
+
+* Check Eligibility
+* Explore Schemes
+
+Add an AI assistant search box:
+
+Placeholder:
+“Tell us about yourself, e.g. I am a farmer from Telangana with ₹90,000 annual income…”
+
+Add example prompts:
+
+“I am a farmer with 2 acres of land.”
+“I am a student looking for scholarships.”
+“I am a senior citizen looking for pension schemes.”
+“I am a woman entrepreneur looking for financial support.”
+
+Add sections:
+
+Why use SchemeSaathi AI?
+
+Cards:
+
+1. Personalized Eligibility
+2. AI Assistance
+3. Official Information
+4. Multilingual Support
+5. Document Verification
+6. Application Guidance
+
+==================================================
+4. LANGUAGE SELECTION
+=====================
+
+On first visit, show:
+
+“Choose Your Language”
+
+Options:
+
+* English
+* తెలుగు
+* हिन्दी
+
+After selection, use the selected language throughout:
+
+* Buttons
+* Forms
+* AI chatbot
+* Eligibility explanation
+* Error messages
+* Application guidance
+
+Do not repeatedly ask for language unless the user changes it from Settings.
+
+==================================================
+5. USER REGISTRATION
+====================
+
+Registration fields:
+
+Full Name
+Email
+Mobile Number
+Password
+Confirm Password
+
+Optional profile fields:
+
+Age
+Gender
+State
+District
+Occupation
+Annual Income
+Category
+
+Validation:
+
+* Required fields must be checked.
+* Email validation.
+* Mobile validation.
+* Password strength.
+* Password and confirm password must match.
+
+After successful registration:
+→ Login
+→ Dashboard
+
+==================================================
+6. LOGIN
+========
+
+Fields:
+
+Email / Mobile
+Password
+
+Buttons:
+
+* Login
+* Forgot Password
+* Create Account
+
+Implement JWT authentication.
+
+Forgot password:
+
+1. Enter email/mobile.
+2. Send OTP.
+3. Verify OTP.
+4. Set new password.
+5. Confirm password.
+6. Login.
+
+OTP should expire after a configurable short period.
+
+==================================================
+7. DASHBOARD
+============
+
+Create a personalized dashboard.
+
+Top section:
+
+“Hello, [User Name]”
+
+Subtitle:
+“Let AI help you find schemes you may be eligible for.”
+
+Main AI search:
+
+“What government scheme are you looking for?”
+
+Quick actions:
+
+* Check Eligibility
+* Search Schemes
+* Upload Documents
+* Saved Schemes
+* Application Guidance
+
+Dashboard cards:
+
+Eligible Schemes
+Saved Schemes
+Pending Applications
+Upcoming Deadlines
+
+Recommended section:
+
+“Schemes You May Be Eligible For”
+
+Each scheme card should show:
+
+* Scheme name
+* Government
+* Category
+* Short description
+* Benefit
+* Eligibility status
+* Required documents
+* Deadline
+* View Details
+* Apply Now
+* Save
+
+==================================================
+8. CITIZEN PROFILE
+==================
+
+Create Profile page.
+
+Fields:
+
+Personal Information:
+
+* Name
+* Age
+* Gender
+* Mobile
+* Email
+
+Location:
+
+* State
+* District
+* Mandal/Taluk
+* Village/Town
+
+Economic Information:
+
+* Annual income
+* Occupation
+* Land ownership
+
+Social Information:
+
+* Category
+* Student status
+* Disability status
+* Senior citizen status
+* Widow status where applicable
+
+Profile completion percentage.
+
+Button:
+“Update Profile”
+
+Use this profile as input for the Eligibility Agent.
+
+==================================================
+9. AI ELIGIBILITY ASSISTANT
+===========================
+
+Create a dedicated AI chat page.
+
+Title:
+“AI Scheme Assistant”
+
+The user can type natural-language questions.
+
+Example:
+
+“I am a 42-year-old farmer from Telangana. I own 2 acres of land and my annual income is ₹90,000. What schemes am I eligible for?”
+
+The AI should extract:
+
+Age = 42
+Gender = Male
+Occupation = Farmer
+State = Telangana
+Annual Income = ₹90,000
+Land = 2 acres
+
+Then run the agent workflow.
+
+Do NOT simply generate random schemes.
+
+The AI must retrieve relevant scheme information from the RAG knowledge base before giving scheme-specific answers.
+
+==================================================
+10. AGENTIC AI WORKFLOW
+=======================
+
+Implement separate logical agents/services.
+
+Agent 1:
+Citizen Profile Agent
+
+Responsibilities:
+
+* Understand user profile
+* Extract structured information
+* Identify missing information
+
+Agent 2:
+Eligibility Agent
+
+Responsibilities:
+
+* Compare citizen information with scheme eligibility criteria
+* Identify eligible / potentially eligible / not eligible
+* Explain which conditions were satisfied
+* Identify missing requirements
+
+Agent 3:
+Document Verification Agent
+
+Responsibilities:
+
+* Check uploaded documents
+* Identify document type
+* Extract relevant information where technically possible
+* Compare information with user profile
+* Report missing or inconsistent information
+
+Agent 4:
+Scheme Retrieval Agent
+
+Responsibilities:
+
+* Search the scheme database
+* Retrieve relevant government documents
+* Perform semantic retrieval
+* Return relevant scheme information to the LLM
+
+Agent 5:
+Recommendation Agent
+
+Responsibilities:
+
+* Analyze retrieved schemes
+* Personalize recommendations
+* Explain why each scheme is relevant
+* Avoid recommending schemes when required eligibility information is unavailable
+
+Agent 6:
+Deadline Monitoring Agent
+
+Responsibilities:
+
+* Check application deadlines
+* Identify upcoming deadlines
+* Show deadline notifications
+* Notify users about important dates
+
+==================================================
+11. RAG SYSTEM
+==============
+
+Build a RAG pipeline.
+
+Knowledge sources should include:
+
+* MyScheme documents
+* PM-KISAN documents
+* State government PDFs
+* Government notifications
+* Official government scheme information
+
+Pipeline:
+
+Documents
+→ Text extraction
+→ Chunking
+→ Embeddings
+→ Vector database
+→ Semantic retrieval
+→ Relevant context
+→ LLM
+→ Grounded response
+
+Every AI scheme answer should preferably display:
+
+“Source”
+“Last Updated”
+“Official Website”
+
+Do not allow the chatbot to invent eligibility requirements.
+
+If information is unavailable:
+
+“I could not verify this requirement from the available official information.”
+
+==================================================
+12. SCHEME DATABASE
+===================
+
+Create MongoDB collection:
+
+schemes
+
+Fields:
+
+schemeId
+schemeName
+description
+government
+state
+category
+benefits
+eligibility
+ageMin
+ageMax
+gender
+occupation
+incomeLimit
+categoryRequirement
+landRequirement
+documentsRequired
+applicationProcess
+applicationUrl
+deadline
+status
+sourceUrl
+sourceName
+lastUpdated
+keywords
+embedding
+
+Categories:
+
+Agriculture
+Education
+Healthcare
+Housing
+Employment
+Pension
+Women Welfare
+Student Scholarships
+Farmer Welfare
+Social Security
+Financial Assistance
+
+==================================================
+13. SCHEME SEARCH
+=================
+
+Create search page.
+
+Search bar:
+
+“Search government schemes…”
+
+Filters:
+
+Category
+State
+Age
+Gender
+Occupation
+Income
+Beneficiary type
+
+Sort:
+
+Relevance
+Newest
+Deadline
+Category
+
+Scheme cards should show:
+
+Scheme Name
+Benefit
+Eligibility
+Documents
+Deadline
+Official Source
+
+Buttons:
+
+* View Details
+* Check Eligibility
+* Apply Now
+* Save
+
+==================================================
+14. SCHEME DETAILS PAGE
+=======================
+
+Display:
+
+Scheme name
+
+Overview
+
+Benefits
+
+Eligibility Criteria
+
+Who can apply?
+
+Required Documents
+
+Application Process
+
+Deadline
+
+How to Apply
+
+Official Website
+
+Source
+
+Last Updated
+
+AI Explanation:
+
+“Why may I be eligible?”
+
+Example:
+
+“Based on your profile:
+✓ Your occupation matches.
+✓ Your income is within the stated limit.
+✓ Your state matches.
+
+Missing information:
+• Land ownership document”
+
+Use clear visual status indicators.
+
+==================================================
+15. ELIGIBILITY RESULT
+======================
+
+After checking eligibility, display:
+
+“Eligibility Result”
+
+Status:
+
+Eligible
+Potentially Eligible
+Not Eligible
+More Information Required
+
+Do not show a misleading percentage unless the system has a clearly defined and explainable scoring method.
+
+Show:
+
+Why you qualify
+
+Matched criteria
+
+Unmatched criteria
+
+Missing information
+
+Required documents
+
+Next steps
+
+Official source
+
+Application link
+
+==================================================
+16. DOCUMENT UPLOAD
+===================
+
+Create document upload page.
+
+Supported:
+
+PDF
+JPG
+JPEG
+PNG
+
+Document categories:
+
+Aadhaar
+Income Certificate
+Land Record
+Caste Certificate
+Residence Certificate
+Disability Certificate
+Education Certificate
+Other
+
+Show:
+
+Upload status
+Verification status
+Detected information
+Mismatch warnings
+
+Example:
+
+Income Certificate
+✓ Document uploaded
+✓ Income detected: ₹90,000
+✓ Matches profile
+
+Do not expose sensitive document contents unnecessarily.
+
+==================================================
+17. SAVED SCHEMES
+=================
+
+Create:
+
+“Saved”
+
+Users can save schemes.
+
+Display:
+
+Scheme Name
+Benefit
+Deadline
+Eligibility Status
+View
+Remove
+
+Do not display Saved before the user logs in.
+
+==================================================
+18. APPLICATION GUIDANCE
+========================
+
+For every scheme provide step-by-step application guidance.
+
+Example:
+
+Step 1:
+Prepare required documents.
+
+Step 2:
+Open official application portal.
+
+Step 3:
+Register/login.
+
+Step 4:
+Fill application form.
+
+Step 5:
+Upload documents.
+
+Step 6:
+Submit application.
+
+Step 7:
+Save acknowledgement/reference number.
+
+Always provide the official application website when available.
+
+==================================================
+19. DEADLINE MONITORING
+=======================
+
+Create deadline section.
+
+Show:
+
+Upcoming deadlines
+Scheme
+Deadline
+Days remaining
+Application status
+
+Notifications:
+
+“PM Scheme application deadline is approaching.”
+
+Allow users to enable/disable notifications.
+
+==================================================
+20. MULTILINGUAL AI
+===================
+
+Support:
+
+English
+Telugu
+Hindi
+
+The AI should answer in the user's selected language.
+
+Example Telugu query:
+
+“నేను తెలంగాణకు చెందిన రైతును. నాకు ఏ ప్రభుత్వ పథకాలు వర్తిస్తాయి?”
+
+The AI should understand it and return the response in Telugu.
+
+Do not translate official scheme names unnecessarily.
+
+==================================================
+21. HELP / CUSTOMER SUPPORT
+===========================
+
+Create Help page.
+
+Sections:
+
+Frequently Asked Questions
+
+How does eligibility checking work?
+How is my information used?
+Where does scheme information come from?
+How do I apply?
+How do I upload documents?
+How can I contact support?
+
+Customer assistance:
+
+Helpline
+Email
+Support request form
+
+Add:
+
+“Need Help?”
+
+==================================================
+22. ADMIN DASHBOARD
+===================
+
+Create secure admin dashboard.
+
+Admin can:
+
+Add scheme
+Edit scheme
+Delete scheme
+Upload government document
+Update eligibility rules
+Update deadline
+Update source URL
+View users
+View saved schemes
+View document verification statistics
+View AI query statistics
+
+Admin dashboard cards:
+
+Total Users
+Total Schemes
+Documents
+Upcoming Deadlines
+AI Queries
+
+Add scheme management table.
+
+==================================================
+23. BACKEND API
+===============
+
+Create REST APIs.
+
+Authentication:
+
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/forgot-password
+POST /api/auth/verify-otp
+POST /api/auth/reset-password
+
+Users:
+
+GET /api/users/profile
+PUT /api/users/profile
+
+Schemes:
+
+GET /api/schemes
+GET /api/schemes/:id
+POST /api/schemes
+PUT /api/schemes/:id
+DELETE /api/schemes/:id
+
+Eligibility:
+
+POST /api/eligibility/check
+
+AI:
+
+POST /api/ai/chat
+
+Documents:
+
+POST /api/documents/upload
+GET /api/documents
+POST /api/documents/verify
+
+Saved:
+
+POST /api/saved/:schemeId
+DELETE /api/saved/:schemeId
+GET /api/saved
+
+Deadlines:
+
+GET /api/deadlines
+POST /api/deadlines/notifications
+
+==================================================
+24. SECURITY
+============
+
+Implement:
+
+JWT authentication
+Password hashing
+Protected API routes
+Role-based authorization
+Input validation
+File type validation
+File size validation
+Rate limiting for sensitive endpoints
+Secure environment variables
+No API keys in frontend
+No sensitive documents in public storage
+
+Use:
+
+.env
+
+Example:
+
+MONGODB_URI=
+JWT_SECRET=
+GEMINI_API_KEY=
+
+Never hardcode secrets.
+
+==================================================
+25. AI RESPONSE FORMAT
+======================
+
+The AI should return structured answers.
+
+Example:
+
+User:
+“I am a farmer from Telangana with ₹90,000 annual income.”
+
+Response:
+
+“Based on the information provided, I found the following potentially relevant schemes.”
+
+Scheme card:
+
+PM-KISAN
+
+Status:
+Potentially Eligible
+
+Why:
+
+* Occupation: Farmer ✓
+* State: Telangana ✓
+* Income information: Provided ✓
+
+Required:
+
+* Aadhaar
+* Land records
+
+Next Step:
+Verify land ownership details.
+
+Source:
+Official government source
+
+Application:
+Apply Now
+
+If eligibility cannot be confirmed:
+
+“More information is required before eligibility can be confirmed.”
+
+==================================================
+26. IMPORTANT AI SAFETY / ACCURACY RULE
+=======================================
+
+The application must distinguish between:
+
+Verified official information
+AI-generated explanation
+User-provided information
+
+Never claim that a citizen is officially approved for a scheme.
+
+Use wording such as:
+
+“Based on the available eligibility criteria, you appear potentially eligible.”
+
+Final approval remains with the relevant government department.
+
+When scheme information is outdated or unavailable, clearly show:
+
+“Information could not be verified from the latest available official source.”
+
+==================================================
+27. HOME PAGE WORKFLOW
+======================
+
+Create a prominent 3-step section:
+
+1. Tell Us About You
+2. AI Checks Eligibility
+3. Get Personalized Guidance
+
+Add visual flow:
+
+Citizen
+↓
+AI Profile Agent
+↓
+Eligibility Agent
+↓
+RAG
+↓
+LLM
+↓
+Recommendation
+↓
+Application Guidance
+
+==================================================
+28. RESPONSIVE DESIGN
+=====================
+
+Desktop:
+Sidebar dashboard + main content.
+
+Tablet:
+Responsive two-column layout.
+
+Mobile:
+Bottom navigation:
+
+Home
+Schemes
+AI Assistant
+Saved
+Profile
+
+Make all forms mobile friendly.
+
+==================================================
+29. DATABASE SEED DATA
+======================
+
+Create sample scheme records for development.
+
+Include examples such as:
+
+PM-KISAN
+PM Fasal Bima Yojana
+Telangana Rythu Bandhu
+Student scholarship schemes
+Pension schemes
+Healthcare schemes
+Housing schemes
+
+Clearly mark development/demo data until verified against current official sources.
+
+==================================================
+30. PROJECT STRUCTURE
+=====================
+
+Use a clean structure:
+
+client/
+src/
+components/
+pages/
+layouts/
+services/
+hooks/
+context/
+utils/
+
+server/
+controllers/
+routes/
+models/
+middleware/
+services/
+agents/
+rag/
+llm/
+eligibility/
+documentVerification/
+recommendations/
+utils/
+config/
+
+==================================================
+31. FINAL REQUIREMENT
+=====================
+
+Do not create only a static UI.
+
+Build a functional full-stack application where:
+
+Frontend
+↕
+Backend APIs
+↕
+MongoDB
+↕
+RAG knowledge base
+↕
+Agent services
+↕
+LLM
+
+All major buttons should work.
+
+Implement proper loading states, error states, empty states, form validation and success messages.
+
+Use realistic demo data where external government APIs are not available.
+
+Make the application presentation-ready for a B.Tech final-year/research project.
+
+The final application should clearly demonstrate the project's research contribution:
+
+“An Agentic AI-based Government Scheme Eligibility Assistant that integrates Large Language Models, Retrieval-Augmented Generation, and autonomous agents to provide personalized, explainable, multilingual, and continuously updated welfare-scheme recommendations for Indian citizens using official government documents as the knowledge source.”
+
+Do not remove the Agentic AI, RAG, multilingual, document verification, eligibility reasoning, application guidance, or deadline monitoring components.
