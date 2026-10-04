@@ -3,13 +3,31 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: API for SchemeSaathi AI government scheme assistance
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: schemes
+    description: Scheme catalogue and details
+  - name: auth
+    description: Citizen accounts and sessions
+  - name: profile
+    description: Citizen profile
+  - name: eligibility
+    description: Explainable eligibility checks
+  - name: assistant
+    description: Retrieval-grounded multilingual assistant
+  - name: saved
+    description: Saved schemes
+  - name: documents
+    description: Private document uploads and verification
+  - name: deadlines
+    description: Application deadline monitoring
+  - name: admin
+    description: Administrative scheme management
 paths:
   /healthz:
     get:
@@ -24,6 +42,510 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a citizen account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Account created and signed in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Invalid registration details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "409":
+          description: Email is already registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /auth/admin-setup:
+    post:
+      operationId: bootstrapAdmin
+      tags: [auth]
+      summary: Set up the first administrator account
+      description: Requires a signed-in account and the one-time setup secret configured by the workspace owner.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminBootstrapInput"
+      responses:
+        "200":
+          description: First administrator account enabled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Sign-in required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: Invalid setup secret
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "409":
+          description: An administrator already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "503":
+          description: Administrator setup is not configured or temporarily unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Sign in to a citizen account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Signed in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid email or password
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: End the current session
+      responses:
+        "200":
+          description: Signed out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+  /auth/me:
+    get:
+      operationId: getCurrentUser
+      tags: [auth]
+      summary: Get the signed-in citizen
+      responses:
+        "200":
+          description: Current account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Not signed in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /schemes:
+    get:
+      operationId: listSchemes
+      tags: [schemes]
+      summary: Search and filter the scheme catalogue
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string }
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: state
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Matching schemes
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Scheme" }
+  /schemes/{id}:
+    get:
+      operationId: getScheme
+      tags: [schemes]
+      summary: Get scheme details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Scheme details
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Scheme" }
+        "404":
+          description: Scheme not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [schemes]
+      summary: Get dashboard summary and recommendations
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Dashboard" }
+  /profile:
+    get:
+      operationId: getProfile
+      tags: [profile]
+      summary: Get the signed-in citizen profile
+      responses:
+        "200":
+          description: Profile details
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CitizenProfile" }
+        "401":
+          description: Not signed in
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+    put:
+      operationId: updateProfile
+      tags: [profile]
+      summary: Create or update citizen profile details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProfileInput" }
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CitizenProfile" }
+        "401":
+          description: Not signed in
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+  /eligibility/check:
+    post:
+      operationId: checkEligibility
+      tags: [eligibility]
+      summary: Check a citizen profile against the scheme catalogue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/EligibilityInput" }
+      responses:
+        "200":
+          description: Explainable eligibility results
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/EligibilityResult" }
+  /ai/chat:
+    post:
+      operationId: chatWithAssistant
+      tags: [assistant]
+      summary: Ask a retrieval-grounded scheme question
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ChatInput" }
+      responses:
+        "200":
+          description: Assistant answer and retrieved sources
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ChatResponse" }
+        "503":
+          description: AI provider is temporarily unavailable
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+  /saved:
+    get:
+      operationId: listSavedSchemes
+      tags: [saved]
+      summary: List the citizen's saved schemes
+      responses:
+        "200":
+          description: Saved schemes
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Scheme" }
+        "401":
+          description: Not signed in
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+  /saved/{schemeId}:
+    post:
+      operationId: saveScheme
+      tags: [saved]
+      summary: Save a scheme
+      parameters:
+        - name: schemeId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Scheme saved
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageResponse" }
+    delete:
+      operationId: removeSavedScheme
+      tags: [saved]
+      summary: Remove a saved scheme
+      parameters:
+        - name: schemeId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Scheme removed
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageResponse" }
+  /documents:
+    get:
+      operationId: listDocuments
+      tags: [documents]
+      summary: List the signed-in citizen's private document metadata
+      responses:
+        "200":
+          description: Private document records
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/CitizenDocument" }
+    post:
+      operationId: createDocument
+      tags: [documents]
+      summary: Save metadata after a direct private file upload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/DocumentInput" }
+      responses:
+        "201":
+          description: Document record created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CitizenDocument" }
+  /documents/{id}/file:
+    get:
+      operationId: downloadDocument
+      tags: [documents]
+      summary: Download a private user-owned document
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Private document bytes
+          content:
+            application/octet-stream:
+              schema: { type: string, format: binary }
+        "401":
+          description: Sign-in required
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "403":
+          description: Document is not owned by the signed-in user
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+        "404":
+          description: Document not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+  /documents/{id}/verify:
+    post:
+      operationId: verifyDocument
+      tags: [documents]
+      summary: Check document metadata against the citizen profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Verification result
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CitizenDocument" }
+        "404":
+          description: Document not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+  /deadlines:
+    get:
+      operationId: listDeadlines
+      tags: [deadlines]
+      summary: List tracked application deadlines
+      responses:
+        "200":
+          description: Deadline items
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/DeadlineItem" }
+  /deadlines/notifications:
+    put:
+      operationId: updateNotificationPreference
+      tags: [deadlines]
+      summary: Enable or disable deadline notifications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/NotificationInput" }
+      responses:
+        "200":
+          description: Updated notification preference
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/NotificationPreference" }
+  /storage/uploads/request-url:
+    post:
+      operationId: requestUploadUrl
+      tags: [documents]
+      summary: Request a presigned URL for a private document upload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UploadUrlRequest" }
+      responses:
+        "200":
+          description: Presigned upload URL generated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UploadUrlResponse" }
+        "400":
+          description: Invalid file metadata
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+  /admin/stats:
+    get:
+      operationId: getAdminStats
+      tags: [admin]
+      summary: Get administrative dashboard statistics
+      responses:
+        "200":
+          description: Admin statistics
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminStats" }
+        "403":
+          description: Admin role required
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+  /admin/schemes:
+    post:
+      operationId: createScheme
+      tags: [admin]
+      summary: Add a scheme to the catalogue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SchemeInput" }
+      responses:
+        "201":
+          description: Scheme created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Scheme" }
+  /admin/schemes/{id}:
+    put:
+      operationId: updateScheme
+      tags: [admin]
+      summary: Update a scheme
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SchemeInput" }
+      responses:
+        "200":
+          description: Updated scheme
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Scheme" }
+    delete:
+      operationId: deleteScheme
+      tags: [admin]
+      summary: Delete a scheme
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Scheme deleted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageResponse" }
 components:
   schemas:
     HealthStatus:
@@ -33,4 +555,286 @@ components:
           type: string
       required:
         - status
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+    MessageResponse:
+      type: object
+      required: [message]
+      properties:
+        message: { type: string }
+    User:
+      type: object
+      required: [id, fullName, email, role]
+      properties:
+        id: { type: string }
+        fullName: { type: string }
+        email: { type: string }
+        role: { type: string, enum: [citizen, admin] }
+    RegisterInput:
+      type: object
+      required: [fullName, email, mobile, password]
+      properties:
+        fullName: { type: string, minLength: 2, maxLength: 120 }
+        email: { type: string, format: email }
+        mobile: { type: string, minLength: 10, maxLength: 16 }
+        password: { type: string, minLength: 8, maxLength: 128 }
+    AdminBootstrapInput:
+      type: object
+      required: [setupSecret]
+      properties:
+        setupSecret: { type: string, minLength: 16, maxLength: 256 }
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 1 }
+    AuthResponse:
+      type: object
+      required: [user]
+      properties:
+        user: { $ref: "#/components/schemas/User" }
+    CitizenProfile:
+      type: object
+      required: [fullName, email]
+      properties:
+        fullName: { type: string }
+        email: { type: string, format: email }
+        mobile: { type: ["string", "null"] }
+        age: { type: ["integer", "null"] }
+        gender: { type: ["string", "null"] }
+        state: { type: ["string", "null"] }
+        district: { type: ["string", "null"] }
+        mandal: { type: ["string", "null"] }
+        village: { type: ["string", "null"] }
+        annualIncome: { type: ["number", "null"] }
+        occupation: { type: ["string", "null"] }
+        landAcres: { type: ["number", "null"] }
+        category: { type: ["string", "null"] }
+        studentStatus: { type: boolean }
+        disabilityStatus: { type: boolean }
+        seniorCitizenStatus: { type: boolean }
+        widowStatus: { type: boolean }
+        completionPercent: { type: integer }
+    ProfileInput:
+      type: object
+      properties:
+        fullName: { type: string, minLength: 2, maxLength: 120 }
+        mobile: { type: ["string", "null"], maxLength: 16 }
+        age: { type: ["integer", "null"], minimum: 0, maximum: 120 }
+        gender: { type: ["string", "null"] }
+        state: { type: ["string", "null"] }
+        district: { type: ["string", "null"] }
+        mandal: { type: ["string", "null"] }
+        village: { type: ["string", "null"] }
+        annualIncome: { type: ["number", "null"], minimum: 0 }
+        occupation: { type: ["string", "null"] }
+        landAcres: { type: ["number", "null"], minimum: 0 }
+        category: { type: ["string", "null"] }
+        studentStatus: { type: boolean }
+        disabilityStatus: { type: boolean }
+        seniorCitizenStatus: { type: boolean }
+        widowStatus: { type: boolean }
+    Scheme:
+      type: object
+      required: [id, schemeName, government, category, description, benefit, eligibilitySummary, documentsRequired, applicationSteps, status, dataStatus, keywords]
+      properties:
+        id: { type: string }
+        schemeName: { type: string }
+        government: { type: string }
+        state: { type: ["string", "null"] }
+        category: { type: string }
+        description: { type: string }
+        benefit: { type: string }
+        eligibilitySummary: { type: string }
+        ageMin: { type: ["integer", "null"] }
+        ageMax: { type: ["integer", "null"] }
+        gender: { type: ["string", "null"] }
+        occupation: { type: ["string", "null"] }
+        incomeLimit: { type: ["number", "null"] }
+        categoryRequirement: { type: ["string", "null"] }
+        landRequirement: { type: ["string", "null"] }
+        documentsRequired:
+          type: array
+          items: { type: string }
+        applicationSteps:
+          type: array
+          items: { type: string }
+        applicationUrl: { type: ["string", "null"] }
+        deadline: { type: ["string", "null"], format: date }
+        status: { type: string }
+        sourceUrl: { type: ["string", "null"] }
+        sourceName: { type: ["string", "null"] }
+        sourceLastUpdated: { type: ["string", "null"], format: date }
+        dataStatus: { type: string, enum: [demo_unverified, official_verified] }
+        keywords:
+          type: array
+          items: { type: string }
+    SchemeInput:
+      type: object
+      required: [schemeName, government, category, description, benefit, eligibilitySummary, documentsRequired, applicationSteps]
+      properties:
+        schemeName: { type: string, minLength: 2 }
+        government: { type: string }
+        state: { type: ["string", "null"] }
+        category: { type: string }
+        description: { type: string }
+        benefit: { type: string }
+        eligibilitySummary: { type: string }
+        ageMin: { type: ["integer", "null"] }
+        ageMax: { type: ["integer", "null"] }
+        gender: { type: ["string", "null"] }
+        occupation: { type: ["string", "null"] }
+        incomeLimit: { type: ["number", "null"] }
+        categoryRequirement: { type: ["string", "null"] }
+        landRequirement: { type: ["string", "null"] }
+        documentsRequired:
+          type: array
+          items: { type: string }
+        applicationSteps:
+          type: array
+          items: { type: string }
+        applicationUrl: { type: ["string", "null"] }
+        deadline: { type: ["string", "null"], format: date }
+        status: { type: string }
+        sourceUrl: { type: ["string", "null"] }
+        sourceName: { type: ["string", "null"] }
+        sourceLastUpdated: { type: ["string", "null"], format: date }
+        dataStatus: { type: string, enum: [demo_unverified, official_verified] }
+        keywords:
+          type: array
+          items: { type: string }
+    Dashboard:
+      type: object
+      required: [eligibleCount, savedCount, documentCount, upcomingDeadlines, recommendations]
+      properties:
+        eligibleCount: { type: integer }
+        savedCount: { type: integer }
+        documentCount: { type: integer }
+        upcomingDeadlines:
+          type: array
+          items: { $ref: "#/components/schemas/DeadlineItem" }
+        recommendations:
+          type: array
+          items: { $ref: "#/components/schemas/Scheme" }
+    EligibilityInput:
+      type: object
+      required: [profile]
+      properties:
+        profile: { $ref: "#/components/schemas/ProfileInput" }
+        schemeId: { type: ["string", "null"] }
+    EligibilityResult:
+      type: object
+      required: [scheme, status, matchedCriteria, unmatchedCriteria, missingInformation, requiredDocuments, nextSteps, verified]
+      properties:
+        scheme: { $ref: "#/components/schemas/Scheme" }
+        status: { type: string, enum: [eligible, potentially_eligible, not_eligible, more_information_required] }
+        matchedCriteria:
+          type: array
+          items: { type: string }
+        unmatchedCriteria:
+          type: array
+          items: { type: string }
+        missingInformation:
+          type: array
+          items: { type: string }
+        requiredDocuments:
+          type: array
+          items: { type: string }
+        nextSteps:
+          type: array
+          items: { type: string }
+        verified: { type: boolean }
+    ChatInput:
+      type: object
+      required: [question, language]
+      properties:
+        question: { type: string, minLength: 1, maxLength: 4000 }
+        language: { type: string, enum: [en, te, hi] }
+    ChatResponse:
+      type: object
+      required: [answer, sources, grounded]
+      properties:
+        answer: { type: string }
+        sources:
+          type: array
+          items: { $ref: "#/components/schemas/SourceReference" }
+        grounded: { type: boolean }
+    SourceReference:
+      type: object
+      required: [title, dataStatus]
+      properties:
+        title: { type: string }
+        url: { type: ["string", "null"] }
+        lastUpdated: { type: ["string", "null"] }
+        dataStatus: { type: string, enum: [demo_unverified, official_verified] }
+    CitizenDocument:
+      type: object
+      required: [id, fileName, category, status, uploadedAt, detectedInformation, mismatchWarnings]
+      properties:
+        id: { type: string }
+        fileName: { type: string }
+        category: { type: string }
+        status: { type: string, enum: [uploaded, needs_review, matches_profile, mismatch] }
+        uploadedAt: { type: string, format: date-time }
+        detectedInformation:
+          type: array
+          items: { type: string }
+        mismatchWarnings:
+          type: array
+          items: { type: string }
+    DocumentInput:
+      type: object
+      required: [fileName, category, objectPath, contentType, size]
+      properties:
+        fileName: { type: string, minLength: 1, maxLength: 255 }
+        category: { type: string }
+        objectPath: { type: string, minLength: 1 }
+        contentType: { type: string }
+        size: { type: integer, minimum: 1 }
+    UploadUrlRequest:
+      type: object
+      required: [name, size, contentType]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 255 }
+        size: { type: integer, minimum: 1, maximum: 10485760 }
+        contentType: { type: string, enum: [application/pdf, image/jpeg, image/png] }
+    UploadUrlResponse:
+      type: object
+      required: [uploadURL, objectPath]
+      properties:
+        uploadURL: { type: string, format: uri }
+        objectPath: { type: string }
+    DeadlineItem:
+      type: object
+      required: [id, schemeName, deadline, daysRemaining, status, dataStatus]
+      properties:
+        id: { type: string }
+        schemeName: { type: string }
+        deadline: { type: string, format: date }
+        daysRemaining: { type: integer }
+        status: { type: string }
+        dataStatus: { type: string, enum: [demo_unverified, official_verified] }
+    NotificationInput:
+      type: object
+      required: [enabled]
+      properties:
+        enabled: { type: boolean }
+    NotificationPreference:
+      type: object
+      required: [enabled]
+      properties:
+        enabled: { type: boolean }
+    AdminStats:
+      type: object
+      required: [totalUsers, totalSchemes, totalDocuments, upcomingDeadlines, aiQueries]
+      properties:
+        totalUsers: { type: integer }
+        totalSchemes: { type: integer }
+        totalDocuments: { type: integer }
+        upcomingDeadlines: { type: integer }
+        aiQueries: { type: integer }
 

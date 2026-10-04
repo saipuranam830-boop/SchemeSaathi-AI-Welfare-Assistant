@@ -1,0 +1,2 @@
+- [MongoDB choice](mongodb-choice.md) — Keep SchemeSaathi on the user's chosen MongoDB service; do not silently substitute PostgreSQL.
+- [Gemini access](gemini-access.md) — Use the server-side Gemini key with direct API calls; do not retry the declined managed integration setup.
